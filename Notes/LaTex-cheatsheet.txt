@@ -1,0 +1,920 @@
+############################################################################
+########## LaTeX CheatSheet
+########## Author: hjd (created on 2021/8/12)
+########## Reference：《一份(不太)简短的LaTeX介绍》- https://mirrors.tuna.tsinghua.edu.cn/CTAN/info/lshort/chinese/lshort-zh-cn.pdf
+########## Last Modified: 2021/8/26
+############################################################################
+
+
+############################################################################
+#### 1.杂项
+############################################################################
+
+空格
+	1.空格键和 Tab 键输入为空格。
+	2.连续的若干个空白字符视为一个空格。
+	3.一行开头的空格忽略不计。
+换行符
+	1.行末的换行符视为一个空格
+	2.连续两个换行符，即空行，会将文字分段。
+	3.多个空行视为一个空行。也可以在行末使用 \par 命令分段
+
+\par							% 行末，分段
+\verb|command|					% 忽视该指令，用于插入一条指令
+
+% 在源代码中插入文件，注意相对/绝对路径(正斜线/)
+\include{<filename>}			% 会另起一页
+\input{<filename>}				% 仅插入内容，不会另起一页
+\includeonly{<filename1>,...}	% 放在导言区，指定载入的文件
+
+% 令LaTeX编译后不生成文档，只排查错误，加快编译速度
+\usepackage{syntonly}
+\syntaxonly						% 放在导言区，不需要时注释即可
+
+% !TEX program = xelatex		% 放在文件开头，设置编译方式（注意%也需要）
+
+% 特殊字符
+\#				% #
+\$				% $
+\%				% %
+\&				% &
+\{				% {
+\}				% }
+\_				% _
+\^{}			% ^
+\~{}			% ~
+\textbackslash	% \	注意\\被定义为换行，或者用 \verb|\|也行
+
+% 中文标点符号
+`				% ‘
+'				% ’
+``				% “
+''				% ”
+-				% - 连字号（hyphen），组成复合词
+--				% — 短破折号（en-dash），连接数字表示范围
+---				% —— 长破折号，连接单词，同中文破折号
+\dots,\ldots	% ... 省略号
+~				% 中文全角波浪号
+
+% LaTeX 标志
+\TeX			% TEX（是错落有致的）
+\LaTeX			% LATEX
+\LaTeXe			% LATEX2ε
+
+% 断行与断页
+~				% 不会断行的空格——'tie'（断行时“空格”生成的间距会被舍去）
+\\[<length>]	% 手动断行，可选参数用于指定向下垂直间距，不会另起一段
+\\*[<length>]	% 手动断行，* 表示禁止在断行处分页
+\newline		% 手动断行，且会在断行位置填充合适的间距
+\newpage		% 断页，双栏排版模式可用作另起一栏
+\clearpage		% 断页
+
+% 合适断行/页的程度，n 取值范围为 0—4，默认为 4，代表强行/禁止断行或断页
+\linebreak[<n>]			% 注意这几个命令并不适合直接用于断行/页	
+\nolinebreak[<n>]		% 因为不会填充间距而是调整字之间的间距填充整行
+\pagebreak[<n>]	
+\nopagebreak[<n>]
+
+% 断词，一般情况 LaTeX 会自动断词
+\-		% 手动指定适合断词的位置，可多写几个，最终会自动在合适位置断开
+
+
+############################################################################
+#### 2.文档元素
+############################################################################
+
+################### 2.1章节、目录、标题、引用、脚注 ########################
+
+% 章节标题——章、节、小节，都有两种变体——带可选参数 [] 或带 * 
+\section,\subsection,\subsubsection			% artcle 文档类带编号的层级
+\chapter,\section,\subsection				% report/book 的层级
+\part								% 将文档分割为大分块，不影响编号
+\section[<short title>]{<title>}	% 标题使用 <title>，目录/页眉/脚使用 <short title> 
+\section*{<title>}					% 标题不带编号，也不生成目录和页眉/脚
+\paragraph,\subparagraph			% 低层次，标题默认不带编号
+
+% 目录
+\tableofcontents		% 会生成单独的一章/节，需要编译两次源代码。默认为"Contents"
+\addcontentsline{toc}{<level>}{<title>}	% 手动生成目录（为带 *的章节标题命令生成目录，在标题命令后使用此命令）
+
+\appendix				% 分开正文和附录。最高章节使用字母编号，从 A 开始
+% 下述命令属于 book 文档类
+\frontmatter			% 前言，页码为小写罗马字母，其后的 \chapter 不编号。
+\mainmatter				% 正文部分，页码为阿拉伯数字，从 1 开始，编号正常
+\backmatter				% 后记部分，页码格式不变
+
+% 标题页
+\title{<title>}			% 标题。必选
+\author{<author>}		% 作者。必选
+\date{<date>}			% 日期。此命令为可选，\date 默认使用 \today
+\today					% 获取当前日期
+\thanks					% 在\title和\author等命令内使用，生成标题页脚注。如\author{ Mary\thanks{E-mail:*****@***.com}\and Ted\thanks{Corresponding author}
+\and					% 对上一条指令形成的脚注隔开多个人名
+\maketitle				% 生成标题页。article 默认不单独成页。report/book 默认单独成页。可在 \documentclass 命令调用文档类时指定 titlepage / notitlepage 选项以修改默认的行为
+
+% 交叉引用——需要多次编译源代码
+\label{<label-name>}	% 用在章节、公式、图表、定理等地方
+\ref{<label-name>}		% 生成交叉引用的编号
+\pageref{<label-name>}	% 生成交叉引用的页码
+% 使用位置
+章节标题——章节标题命令 \section 之后紧接着使用
+行间公式——单行公式在公式内任意位置；多行公式在每行公式的任意位置使用
+有序列表——在 enumerate 环境的每个 \item 后、下一个 \item 前
+图表标题——在图表标题命令 \caption 之后紧接着使用
+定理环境——在定理环境内部任意位置使用
+注意：在使用不记编号的的命令（\section*、\caption*、带可选参数的 \item 命令等）不能使用 \label 命令，否则引用编号会不正确
+
+% 脚注和边注
+\footnote{<footnote>}	% 生成脚注。在表格、各种盒子内可能不能正确生成脚注
+\footnotemark			% 为脚注计数
+\footnotetext			% 生成脚注。与上条指令配合解决不能正确生成脚注的问题
+\marginpar[<left-margin>]{<right-margin>}	% 在边栏生成边注。如果只给定了<right-margin>，那么边注在奇偶数页文字相同；如果同时给定了 <left-margin>，则偶数页使用 <left-margin> 的文字
+
+
+################### 2.2环境 ################################################
+
+% 特殊环境——有序环境 enumerate，无序环境 itemize
+\item[]			% 标明每个列表项。[] 中自定义序列符号。最多嵌套四层
+\begin{enumerate}...\end{enumerate}		% 有序环境
+\begin{itemize}...\end{itemize}			% 无序环境
+\begin{description}...\end{description}	% 与前两者相似，不同在于其\item[<item title>]后的可选参数可用于写关键字（粗体），一般必填
+
+% 各级无序列表符号定义
+\labelitemi 到 \labelitemiv
+\renewcommand{\labelitemi}{\ddag}		% 示例，第一级无序列表
+\renewcommand{\labelitemii}{\dag}		% 示例，第二级无序列表
+
+% 各级有序列表符号定义
+\labelenumi 到 \labelenumiv
+\renewcommand{\labelenumi}%
+	{\Alph{enumi}>}				% 示例，重定义符号需要使用计数器相关命令
+
+% 对齐环境
+\begin{center} … \end{center}			% 居中
+\begin{flushleft} … \end{flushleft}		% 左对齐
+\begin{flushright} … \end{flushright}	% 右对齐
+
+\centering,\raggedright, \raggedleft	% 直接改变文字对齐方式
+
+% 引用环境
+\begin{quote} … \end{quote}			% 引用较短的文字，首行不缩进
+\begin{quotation} … \end{quotation}	% 引用若干段文字，首行缩进
+\begin{verse} … \end{verse}			% 用于排版诗歌，首行悬挂缩进
+
+% 摘要环境
+\begin{abstract} … \end{abstract}	% article/report 可用，一般紧跟 \maketitle 命令后介绍文档的摘要
+
+% 代码环境
+\begin{verbatim[*]} … \end{verbatim[*]}	% 回车和空格代表换行和空位。带 *
+号的命令会将空格显示成 "︺"
+\verb<delim><code><delim>			% 简短的代码或关键字。<delim>
+标明代码的分界位置，前后必须一致，可任意选择不与代码冲突的字符（除字母、空格、星号外）。习惯上使用 |。\verb* 与\verbatim* 效果相同
+
+
+################### 2.3表格 ################################################
+
+\begin{tabular}[<align>]{<column-spec>}
+<item1> & <item2> & … \\
+\hline
+<item1> & <item2> & … \\
+\end{tabular}
+% tabular 是最基本的表格排版环境，& 用于分割单元格，\hline 用来在行与行之间绘制横线。可选参数 <align> 用于控制垂直对齐，t、b 分别表示表格顶部、底部对齐不写默认居中
+
+% 列格式 <column-spec>，指定列数及每列格式
+l/c/r			% 左/居中/右对齐，不折行（注意多列需要多个参数）
+p{<width>}		% 单元格宽度固定为 <width>，垂直方向靠底端对齐，自动折行
+|				% 绘制竖线
+@{<string>}		% 自定义内容 <string>，可在单元格前后插入任意文本，同时也消除单元格前后额外添加的间距
+@{}				% 可直接用于消除单元格前后的间距
+*{<n>}{<column-spec>}	% 格式参数的重复写法
+>,<				% 给列格式前后加上修饰命令，需要引入宏包 array
+		例：\begin{tabular}{>{\itshape}r<{*}} % 第一列粗体斜体 
+\centering\arraybackslash	% 辅助格式中将 p{<width>} 列改为居中对齐，用 \arraybackslash 修复 \\ 的作用
+m{<width>},b{<width>}		% array 宏包提供，在垂直方向居中及顶端对齐
+
+% 列宽
+\usepackage{tabularx}		% 宏包 tabularx，多个 X 列格式平均分配列宽，需要指定总宽度
+		例：\beign{tabularx}{14em}{|*{4}{>{\centering\arraybackslash}X|}}...\end{tabularx}
+
+% 横线
+\hline				% 绘制表格横线
+\cline{<i>-<j>}		% 跨越部分单元格绘制横线
+		例：\cline{2-3}	% 绘制第2列到第3列的横线
+% 三线表横线——科技论文常用，需要宏包 booktabs
+\toprule			% 顶部粗体横线
+\midrule			% 中间的普通横线
+\bottomrule			% 底部粗体横线
+\cmidrule{<i>-<j>}	% 中间的普通横线，对应于 \cline{<i>-<j>}
+
+% 合并横向单元格
+\multicolumn{<n>}{<column-spec>}{<item>}	% <n>为要合并的列数，<column-spec>为合并后的格式，只允许出现一个l/c/r或p格式。若合并前带|，合并后也要带|。<item>为表格内容。n为1时可用于修改单元格格式
+
+% 合并纵向单元格——需要宏包 multirow
+\multirow{<n>}{<width>}{<item>}	% <width>为合并后的宽度，可用*使用自然宽度
+
+% 嵌套表格——可起到拆分单元格效果，需要配合@{}将额外边距去掉
+% 若不画线，仅在垂直方向“拆分”——宏包 makecell
+\makecell{d1 \\ d2}		% 将单元格“拆分”
+
+% 表格行距控制
+\renewcommand\arraystretch{1.8}		% 修改\arraystretch命令使之宽松
+\\[<linewidth>]			% 给此行下面添加额外间距，适合行间无横线的表格
+
+################### 2.4图片 ################################################
+% 需要 graphicx 宏包
+\includegraphics[<options>]{<filename>}	 % 加载图片，相对/绝对路径。注意不能有空格和多余的英文点号。扩展名可不写
+		% <options>支持<key>=<value>赋值
+			width=<width>		图片缩放到此宽度
+			height=<height>		图片缩放到此高度
+			scale=<scale>		图片相对原始尺寸缩放<scale>倍
+			angle=<angle>		图片逆时针旋转<angle>度
+\graphicspath			% 用于声明一个或多个图片存放的目录，使用这些目录里的图片时可不用写路径
+		例：假设主要图片放在 figures 子目录下，标志放在 logo子目录下
+			\graphicspath{{figures/}{logo/}}
+
+################### 2.5盒子——LaTeX排版的基础单元 ###########################
+
+% 水平盒子
+\mbox{...}				% 生成一个基本的水平盒子，只有一行，不允许分段
+\makebox[<width>][<align>]{...}	% 设置宽度和对齐方式，c/l/r/s——居中/左/右/分散对齐
+
+% 带框的水平盒子
+\fbox,\framebox			% 为水平盒子添加边框，用法与上面两条命令相同
+
+% 垂直盒子
+\parbox[<align>][<height>][<inner-align>]{<width>}{…}
+\begin{minipage}[<align>][<height>][<inner-align>]{<width>}
+…
+\end{minipage}
+		% <align>为盒子与周围文字的对齐，<height>为高度，<inner-align>为内容对齐方式——t/b/c/s，顶部/底部/居中/分散对齐
+在 minipage 里使用 \footnote 命令，生成的脚注会出现在盒子底部，编号是独立的，并且使用小写字母编号
+\parbox 里无法正常使用 \footnote 命令，只能在盒子里使用 \footnotemark，在盒子外使用\footnotetext
+
+% 标尺盒子
+\rule[<raise>]{<width>}{<height>}	% 画实心矩形盒子，也可画线(标尺)
+
+
+################### 2.6浮动体 ##############################################
+
+% 两类浮动体环境——table和figure
+\begin{table}[<placement>]
+...
+\end{table}
+	% <placement>提供符号表示排版位置。默认为tbp
+	% 顺序无关，按照 h-t-b-p 优先级排版
+	% 限制个数及百分比，默认每页≤3个，顶部≤2个(70%)，底部≤1个(30%)
+	h	当前位置（代码所处上下文
+	t	顶部
+	b	底部
+	p	单独成页
+	!	在决定位置时忽视限制
+
+% 浮动体标题
+\caption{}				% 标题，自动生成编号
+\caption*{}				% 不带编号
+\listoftables			% table 生成目录
+\listoffigures			% figure 生成目录，类似\tableofcontents
+
+% 并排和子图表
+为每个图片生成标题需要利用\parbox或minipage环境，将标题限制在盒子内
+\subfloat[]{}			% 为子图添加标题，需要 subfig 宏包
+
+
+############################################################################
+#### 3.排版数学公式
+############################################################################
+
+################### 3.1 AMS 宏集 ###########################################
+
+\usepackage{amsmath}		% 对 LaTeX 原生数学公式排版的扩展
+amsfonts,以及基于它的 amssymb 提供丰富的数学符号
+amsthm 扩展了 LaTeX 定理证明格式
+
+
+################### 3.2公式排版基础 ########################################
+
+% 行内公式——公式与文字混排
+$...$
+
+% 行间公式——单独列为一行排版
+\begin{equation}...\end{equation}	% equation 环境，自动生成编号，这个编号可以用 \label 和 \ref 生成交叉引用，amsmath 的 \eqref 命令甚至为引用自动加上圆括号；还可以用 \tag 命令手动修改公式的编号，或者用 \notag 命令取消为公式编号（与之基本等效的命令是 \nonumber）
+
+% 不使用编号
+\[...\]或使用 displaymath 环境以及 euqation* 环境
+
+% 行内公式在排版公式元素（如分式、巨算符）时，稍显“局促”。如求和符号的限定范围显示在右下角而非正下方。此时建议使用行间公式。
+
+% 数学模式——\[、equation 环境、$ 行内公式输入等
+相比文本模式的特点:
+	1.数学模式中的空格被忽略。间距由符号决定。人为引入间距：\quad,\qquad
+	2.不允许有空行/段。也无法通过 \\ 手动换行
+	3.所有的字母当作变量处理，输入文本需要 \mathrm,\text
+
+
+################### 3.3数学符号 ############################################
+
+reference：LaTeX 所有常用符号整理 - https://blog.csdn.net/Ying_Xu/article/details/51240291
+
+% 指数、上下标和导数
+^			% 上标
+_			% 下标，都需要 {} 以包裹子公式，否则只对一个字母起效
+',''		% 导数上标',''
+
+% 分式和根式
+\frac{分子}{分母}		% 分式，在行间公式为正常大小，行内被极度压缩
+\dfrac{}{},\tfrac{}{}	% amsmath 提供，可在行内使用正常大小的分式
+\sqrt[n]{}				% 根式，n 次方根可选
+\binom					% amsmath 包提供，特殊的分式形式——二项式	
+		例：\[\binom{n}{k}=\binom{n-1}{k}+\binom{n-1}{k-1}\]
+
+% 关系符
+\ne,\ge,\le			% ≠，≥，≤
+\approx				% ≈
+\equiv				% ≡
+\propto				% 正比符号
+\sim				% 相似 ~
+\stackrel			% 自定义二元关系符，将一个符号叠加在原有的二元关系符之上
+
+% 算符
+\times				% ×
+\div				% ÷
+\cdot				% 点乘
+\pm,\mp				% 加减
+\nabla				% 全导
+\partial			% 偏导
+\DeclareMathOperator	% amsmath 包，自定义算符，带 * 的命令表示带上下限
+
+% 巨算符——在行内公式和行间公式的大小有区别
+\int				% 积分
+\oint				% 闭区间积分
+\sum				% 求和
+\prod				% 连乘
+
+% 巨算符的上下标位置可由 \limits,\nolimits 调整。前者令符号位于上下方，后者令符号位于右上/下方
+		例：$\sum\limits_{i=1}^n \quad \int\limits_0^1$
+		  \[\sum\nolimits_{i=1}^n \quad \int\limits_0^1\]
+
+\substack			% amsmath 包提供，能在下限处书写多行表达式。subarray
+环境更进一步，令多行表达式可选择居中（c）或左对齐（l）
+
+% 数学重音和上下括号
+\dot{...}				% 求一阶导
+\ddot{...}				% 求二阶导
+\vec{...}				% 表示向量的箭头
+\hat{mathbf{e}}			% 表示向量的符号 e
+\overline,\underline	% 上/下方画线，可叠加
+\widehat				% 宽重音
+\overrightarrow			% 表示向量的箭头（大）。如 \overrightarrow{AB}
+\overbrace,\underbrace	% 上/下括号，各自可带一个上/下标公式，可叠加
+
+% 箭头
+\rightarrow,\to				% →
+\leftarrow,\gets			% ←
+\xleftarrow,\xrightarrow	% amsmath 包。长度随符号伸展的箭头
+		例：\[c\xrightarrow[x<y]{a*b*c}d\]	[]中是符号下方的子公式
+
+% 括号和定界符
+(),[],\{\}				% 小/中/大括号
+\langle,\rangle			% 尖括号
+
+% 对定界符使用 \left,\right 可使其大小可变。必须成对使用。需要使用单个时，另一个定界符写为 \left. 或 \right.
+		例：\[1 + \left(\frac{1}{1-x^2}\right)^3\]
+			\[left. \frac{\partial f}{\partial t}\right|_{t=0}\]
+% 不满意自动调节的定界符大小时，可用 \big,\bigg 等生成固定大小的定界符。或者类似 \left 的 \bigl,\biggl，以及类似 \right 的 \bigr,\biggr。不必成对出现
+		例：大小比较：\bigl < \Bigl < \biggl < \Biggl
+% \big,\bigg 的另一好处：其包裹的公式块可换行。
+
+################### 3.4多行公式 ############################################
+
+% 长公式折行——一般在等号前进行，其次在加号、减号前，再次在乘号、除号前
+% amamath 的 multline 环境允许使用 \\ 折行。将编号放在最后一行，首行左对齐，末行右对齐，其余行居中。multline* 排版不带编号的公式
+
+% 多行公式——使用 align 环境，并用 & 将公式隔为两部分对齐，& 通常放在等号左边
+	% align 环境会给每行公式编号，可使用 \notag 去掉某行编号
+	% 若将 & 放在等号右侧，需要在等号后添加 {} 以产生正常间距
+	% align 对齐多组公式，在公式间使用 & 分隔
+
+% gather 环境——罗列数个公式，而不需要按等号对齐时使用
+
+% 公用编号的多行公式——编号位于公式的居中位置
+	% aligned、gathered 环境，与 equation 环境 套用即可
+
+
+################### 3.5数组与矩阵 ##########################################
+
+% array 环境排版二维数组
+	% 与 tabular 环境类似，需要定义列格式，用 \\ 换行，用 & 分隔
+	% 数组可作为公式块，在外套用 \left、\right 等定界符
+		例：\[ |x| = \left\{
+			\begin{array}{rl}
+			-x & \text{if } x < 0,\\
+			0 & \text{if } x = 0,\\
+			x & \text{if } x > 0.
+			\end{array} \right. \]
+	% 注意此例使用 cases 环境更容易完成，需要 amsmath 包
+		例：\[ |x| =
+			\begin{cases}
+			-x & \text{if } x < 0,\\
+			0 & \text{if } x = 0,\\
+			x & \text{if } x > 0.
+			\end{cases} \]
+% 排版矩阵——array、不带定界符的 matrix、带各种定界符的 pmatrix(()、bmatrix([)、Bmatrix({)、Vmatrix(||)
+	% 排版分式时，使用 \dfrac 命令，同时通过 \\[width] 调整间距
+
+################### 3.5公式中的间距 ########################################
+
+\quad		% 生成间距
+\qquad		% 生成2倍 \quad 的间距
+\,			% 前三个在文本及数学环境都可用，其余都只能用于数学环境
+\:
+\;
+\!			% 负间距
+
+% 修正积分的被积函数与微元之间的距离 \,
+		例：\[\int_a^b f(x)\,\mathrm{d}x\]	注意 d 是直立体
+% 生成多重积分号 \! ——连写两个 \int，其间距过宽
+		例：\[\int\int\]
+			\[\int\!\int\]
+
+
+################### 3.6数学符号的字体控制 ##################################
+
+% 数学字母字体——拉丁字母、数字、大写希腊字母、重音符号
+% 切换字体的命令——若需要为所有数学符号切换字体，需要调用宏包
+\mathnormal{},\mathrm{},\mathit{},\mathbf{},\mathsf{},\mathtt{},
+\mathcal{},			% eucal 仅提供大写字母
+\mathscr{}			% mathrsfs 仅提供大写字母
+\mathfrak{}			% amssymb 或 eufrak
+\mathbb{}			% amssymb 仅提供大写字母
+
+% 数学符号尺寸——行间公式 > 行内公式 > 上下标 > 次级上下标
+\displaystyle		% 行间公式尺寸
+\textstyle			% 行内公式尺寸
+\scriptstyle		% 上下标尺寸
+\scriptscriptstyle	% 次级上下标尺寸
+		例：分式中分子分母默认为行内公式尺寸，此处将分母切换到行间公式尺寸
+			\[
+			r = \frac
+				{\sum_{i=1}^n (x_i- x)(y_i- y)}
+				{\displaystyle \left[
+				\sum_{i=1}^n (x_i-x)^2
+				\sum_{i=1}^n (y_i-y)^2
+				\right]^{1/2} }
+			\]
+
+% 加粗的数学符号
+\mathbf{}			% 只能用于拉丁字母和大写的希腊字母，对小写希腊字母无效
+\boldmath{}			% 将整套数学字体切换为粗体（前提是宏包支持），只能在公式外使用
+		例：{\boldmath$\mu, M$}
+\boldsymbol			% amsbsy 提供
+		例：$\mu, M \qquad \boldsymbol{\mu}, \boldsymbol{M}$
+\bm					% bm 宏包提供。可生成“伪粗体”
+
+
+################### 3.7定理环境 ############################################
+
+% LaTeX 原始的定理环境
+\newtheorem{<theorem environment>}{<title>}[<section-leve>]
+\newtheorem{<theorem environment>}[<counter>]{<title>}
+	% <theorem environment> 为定理环境的名称
+	% <title> 为标题（“定理”，“公理”等）
+	% 定理序号由可选参数之一决定，不能同时使用：
+		% <section leve> 为章节级别（chapter、section等），定理序号将为章节的下一级序号
+		% <counter>	为 \newcounter 自定义的计数器名称，序号由该计数器管理
+	% 交叉引用方式：\label{xxx:nnn}...\ref{xxx:nnn}
+
+% amsthm 宏包
+\theoremstyle		% 切换定理格式，在 \newtheorem 之前使用
+					% 其中 plain 与 LaTeX 格式一致
+					% definition 使用粗体标签、正体内容
+					% remark 使用斜体标签、正体内容
+\newtheorem*		% 不带序号
+
+% 证明环境和证毕符号
+	% proof 环境，由 amsthm 包提供，环境末尾加上证毕符合(一个小方框)
+	% 如果行末是一个不带编号的公式，该符号会另起一行，这时可使用 \qedhere 命令将符号放在公式末尾
+	% 在 align 等环境中使用 \qedhere 会使该符号盖住编号
+
+
+################### 3.8符号表 ############################################
+
+Summary：LaTeX符号表 - https://321hjd.github.io/yyds/671b85fb.html
+
+
+
+############################################################################
+#### 4.排版样式设定
+############################################################################
+
+
+################### 4.1字体和字号 ##########################################
+
+% 字体样式
+\mathbf{}					% 粗体。修改数学公式字母样式
+\rmfamily,\textrm{}			% 衬线字体（罗马体）
+\sffamily,\textsf{}			% 无衬线字体
+\ttfamily,\texttt{}			% 等宽字体
+\mdseries,\textmd{}			% 正常粗细（中等）
+\bfseries,\textbf{}			% 粗体
+\upshape,\textup{}			% 直立体
+\itshape,\textit{}			% 意大利斜体
+\slshape,\textsl{}			% 倾斜体
+\scshape,\textsc{}			% 小型大写字母
+\em,\emph{}					% 强调，默认斜体
+\normalfont,\textnormal{}	% 默认字体
+		例：% \bfseries		直接使用时影响其后所有字体
+			% {\bfseries <some text>}	带花括号局部生效
+			% \textbf{}		局部生效
+
+% 字号——绝对大小单位 pt
+\fontsize{<size>}{<base line-skip>}		% 设定任意大小字号。
+		% <size> 为字号
+		% <base line-skip>为基础行距
+		% 非导言区，需要 \selectfont 命令才能生效
+字号			10pt 选项（默认）	11pt 选项		12pt 选项
+\tiny			5pt					6pt				6pt
+\scriptsize		7pt					8pt				8pt
+\footnotesize	8pt					9pt				10pt
+\small			9pt					10pt			10.95pt
+\normalsize		10pt				10.95pt			12pt
+\large			12pt				12pt			14.4pt
+\Large			14.4pt				14.4pt			17.28pt
+\LARGE			17.28pt				17.28pt			20.74pt
+\huge			20.74pt				20.74pt			24.88pt
+\Huge			24.88pt				24.88pt			24.88pt
+
+% 切换字体编码
+\usepackage[T1]{fontenc}	% fontenc 宏包配合传统 LaTeX 字体。
+
+% 使用 fontspec 宏包更改字体——注意看宏包的帮助文档
+% xelatex 和 lualatex 编译命令能够支持直接调用系统和 TEX 发行版中的 .ttf 或 .otf 格式字体
+% 设置 \rmfamily 等命令的默认字体
+\setmainfont{<font name>}[<font features>]
+\setsansfont{<font name>}[<font features>]
+\setmonofont{<font name>}[<font features>]
+		% <font name>为字体的文件名（带扩展名），或字体的英文名称
+		% <font feartures>手动配置对应粗体或斜体
+		例：\setsansfont[BoldFont={Arial Bold}, ItalicFont={Arial Italic}]{Arial}
+		% 注意：fontspec 宏包会覆盖数学字体设置。调用时需要指定 no-math选项
+		% fontspec 宏包可能被其它宏包或文档类（如 ctex 文档类）自动调用时，则在文档开头的 \documentclass 命令里指定 no-math 选项
+
+% 在 ctex 宏包或文档类中更改中文字体
+\setCJKmainfont{<font name>}[<font features>]
+\setCJKsansfont{<font name>}[<font features>]
+\setCJKmonofont{<font name>}[<font features>]
+		例：宋体，并配置粗体为黑体，斜体为楷体。
+			\setCJKmainfont{SimSun}[BoldFont=SimHei, ItalicFont=KaiTi]
+
+% 使用 unicode-math 宏包配置 Unicode 数学字体
+\usepackage{unicode-math}
+\setmathfont{<font name>}[<font features>]
+
+
+################### 4.2文字装饰和强调 ######################################
+
+\underline{}			% 下划线。不同单词可能产生高低各异的下划线
+\uline{}				% 下划线。由 ulem 宏包提供
+\emph{}					% 斜体。在{}中再次使用\emph{}，嵌套文字将为直立体
+
+
+################### 4.3段落格式和间距 ######################################
+
+% 长度和长度变量
+\newlength{\<length command>}		% 自定义长度变量
+\setlength{\<length command>}		% 为长度变量赋值
+\addtolength{\<length command>}		% 为长度变量增加长度
+		% 弹性长度：12pt plus 2pt minus 3pt
+		% 基础长度 12pt，可伸展至 14pt，可压缩至 9pt
+pt		点阵宽度，1/72.27in
+bp		点阵宽度，1/72in
+in		英寸
+cm		厘米
+mm		毫米
+em		当前字号下大写字母 M 的宽度，常用于水平距离的设定
+ex		当前字号下小写字母 x 的高度，常用于垂直距离的设定
+
+% 行距
+\linespread{<factor>}		% 在导言区使用，设置行距。
+		% <factor>作用于基础行距而非字号，缺省的是 1.2 倍字号大小
+		% \linespread{1.5} 意味着最终行距为 1.8 倍字号大小
+		% 如果不是在导言区全局修改，而想要局部地改变某个段落的行距，需要用 \selectfont 命令使 \linespread 命令的改动立即生效。注意要直到分段才会生效
+		% 若仅需要改变某部分文字的行距，则需要在 "}" 前加上分段命令 \par
+
+% 段落格式——同设置行距命令，分段时生效
+\setlength{<leftskip>}{<length>}
+\setlength{<rightskip>}{<length>}
+\setlength{<parindent>}{<length>}
+\setlength{<parskip>}{<length>}			% 段落间垂直间距
+\indent			% 缩进。可多个累加
+\noindent		% 不缩进
+		例：段落间距 0.8ex 到 1.5ex 间变动
+			\setlength{\parskip}{lex plus 0.5ex minux 0.2ex}
+
+% 水平间距——单词间的“空格”默认转化为水平间距
+\hspace{<length>}		% 手动插入额外水平间距
+\hspace*{<length>}		% 得到不会因断行而消失的水平间距
+\hspace{\stretch{<n>}}	% \stretch{<n>} 生成弹性长度，<n>为权重
+						% 基础长度为 0pt，可无限延伸
+						% \fill <==> \stretch{1}
+						% 多个 \stretch{<n>} 会将此行的空间按照权重 <n> 分配
+		% \hspace{} 常使用 em 作单位
+		% \quad,\qquad <==> \hspace{1em},\hspace{2em}
+
+% 垂直间距
+\vspace{<length>}		% 手动增加垂直间距
+\vspace*{<length>}		% 同 \hspace
+\vspace{\stretch{<n>}}	% 同 \hspace
+\\[],\\*[]				% 断行 + 增加间距
+
+
+################### 4.4页面和分栏 ##########################################
+
+% 利用 geometry 宏包设置页面参数
+\geometry{<geometry-settings>}				% 设置页面参数
+\usepackage[<geometry-settings>]{geometry}	% 或者将参数指定为宏包选项
+		% <geometry-settings>多以 <key>=<value>形式组织
+		% 如 A4 纸张，上下边距 1 英寸，左右边距 1.25 英寸
+			\usepackage[hmargin=1.25in,vmargin=1in]{geometry}
+		% 对于书籍等双面文档，习惯上奇数页右边、偶数页左边留出较多的页边距，而书脊一侧的奇数页左边、偶数页右边页边距较少
+			\usepackage[inner=1in,outer=1.25in]{geometry}
+
+% 页面内容的垂直对齐
+\raggedbottom		% 垂直方向向顶部对齐
+\flushbottom		% 垂直方向分散对齐
+
+% 分栏
+\onecolumn								% 单栏排版
+\twocolumn[<one-column top material>]	% 双栏排版
+\newpage			% 双栏模式下换栏
+\clearpage			% 换页
+
+
+################### 4.5页眉页脚 ############################################
+
+% 基本的页眉页脚样式
+\pagestyle{<page-style>}		% 修改页眉页脚样式
+\thispagestyle{<page-style>}	% 修改当前页的页眉页脚样式
+		% <page-style>
+			empty		页眉页脚为空
+			plain		页眉为空，页脚为页码
+			headings	页眉为章节标题和页码，页脚为空
+			myheadings	页眉为页码及 \markboth 和 \markright 指定的内容，页							脚为空
+\pagenumbering{<style>}			% 改变页眉页脚的页码样式
+		% <style>为页码样式
+			arabic		阿拉伯数字（默认）
+			roman		小写罗马数字
+			Roman		大写罗马数字
+			……
+		% 使用该命令后，页码重置为 1
+
+% 手动修改页眉页脚内容
+\markright{<right-mark>}
+\markboth{<left-mark>}{<right-mark>}	% 在双面排版、headings/myheadings 样式下，分别在左页（偶数页）和右页（奇数页）上。
+\renewcommand\chaptermark[1]{%
+	\markboth{Chapter \thechapter\quad #1}{}}
+\renewcommand\sectionmark[1]{%
+	\markright{\thesection\quad #1}}	% 将页眉内容转为小写字母
+										% 适用于 report/book 
+										% 对于 article，分别为 \sectionmark 和 \subsectionmark
+
+% fancyhdr 宏包——允许将内容放在页眉页脚的左中右三个位置，并添加横线
+\pagestyle{fancy}			% 调用 fancy 样式
+\fancyhf[<position>]{}		% 同时定义页眉页脚，习惯上用于清空页眉页脚的设置
+\fancyhead[<position>]{}
+\fancyfoot[<position>]{}	% <position>分别为 L/C/R 以及 O(奇数页)/E(偶数页)的组合
+
+
+############################################################################
+#### 5.特色工具和功能
+############################################################################
+
+
+################### 5.1参考文献和BIBTEX工具 ################################
+
+% 基本的参考文献和引用
+\cite[]{<citation>}		% 在正文中引用参考文献。
+						% <citation> 为参考文献标签，类似 \ref 的参数
+		例：带可选参数如 \cite[page 22]{Paper2013} 
+			可得到形如 [13,page 22]的引用
+
+% 参考文献由 thebibliography 环境包裹
+% 每条参考文献由 \bibitem 开头，其后为参考文献本身内容
+\begin{thebibliography}{<widest label>}
+	\bibitem[<item number>]{<citation>}...
+\end{thebibliography}	% <citation> 为 \cite 使用的文献标签
+						% <item number> 自定义参考文献序号，省略则按自然排序
+						% <widest label> 限制文献序号宽度，如 99 代表不超过							两位数，通常设为与参考文献数目一致
+
+% BIBTEX 数据库——以 .bib 为扩展名，内容是若干个文献条目，格式为
+@<type>{<citation>,				% <type> 为文献类别，如 artitle 为学术论文
+	<key1> = {<value1>},		% book 为书籍，incollection 为论文集中的一篇
+	<key2> = {<value2>},		% <citation> 为文献标签
+	...							% <key> = <value> 为条目里的各个字段
+}
+
+类别					必需字段						可选字段
+article,学术论文	author,title,journal,year		volume,number,pages,doi
+book,书籍			author/editor,title,publisher,year volume/number,series,address
+...
+
+% BIBTEX 样式——样式文件以 .bst 为扩展名
+\bibliographstyle{<bst-name>}	% 使用样式 <bst-name>，不带扩展名
+
+% 使用 BIBTEX 排版参考文献
+% 需要使用 \bibliographystyle 设定样式（必须有）
+% 并用 \bibliography{bib-name} 代替 thebibliography 环境（必须有）
+% 注意只会列出被 \cite 引用的文献，若需列出未被引用的文献
+% 需要使用 \notice{<citation>}，或直接用 \notice{*} 让所有未被引用的列出
+
+% natbib 宏包——人名+年份的引用
+\citep{<citation>}		% 形如 (Axford et al.,2013)
+\citet{<citation>}		% 形如 Axford et al. (2013)
+\usepackage[numbers,sort&compress]{natbib}		% 压缩引用序号。如(3—7)
+
+% biblatex 宏包
+
+
+################### 5.2索引和 makeindex 工具 ###############################
+
+% 使用 makeindex 工具的方法
+1. 在源代码导言区调用 makeidx 宏包，并用 \makeindex 开启索引收集
+	\usepackage{makeidx}
+	\makeindex
+2. 在正文中需要索引的地方使用 \index，在需要输出索引的地方使用 \printindex
+3. 编译
+
+% 索引项的写法
+\index{<index entry>}		% 添加索引项 <index entry>
+							% !、@、|等需要加前缀 "，"则需要输入两个引号 ""
+% <index entry> 索引项分类
+		% 普通索引
+		% 分级索引，以 ! 分隔，最多三级
+			hello			hello,1				一级索引
+			hello!Peter			Peter,3			二级索引
+			hello!Peter!Jack		Jack,3		三级索引
+		% 格式化索引，形式为 <alpha>@<format>
+			<alpha> 为纯字母，排序用
+			<format> 为格式，可包括 LATEX 代码和公式
+			如：alhpa@$\alpha$		α,7			公式
+				bold@\textbf{bold}	bold,12		粗体
+		% 页码范围
+			morning|(		morning,6—7		索引范围开头
+			morning|)						索引范围结尾
+		% 格式化索引页码
+			Jenny|textbf		Jenny,3			调用 \textbf 加粗页码
+			Joe|see{Jenny}	Joe,see(斜体) Jenny	调用 \see 生成特殊形式
+
+
+################### 5.3使用颜色 ############################################
+
+% 需要 color/xcolor 宏包
+% 调用宏包时指定 dvipsnames 选项，会有额外 68 种颜色名称可用
+
+% 颜色的表达方式
+	% 色彩模型、色彩代码，代码用 0~1 数字代表成分比例
+	% color 支持 rgb、cmyk 和 gray 模型
+	% xcolor 支持更多的模型如 hsb 等
+\color[<color-mode>]{<code>}
+\color{<color-name>}								% 切换颜色
+\definecolor{<color-name>}{<color-mode>}{<code>}	% 自定义颜色
+
+% 带颜色的文本和盒子
+% 带颜色的文本
+\textcolor[<color-mode>]{<code>}{<text>}
+\textcolor{<color-name>}{<text>}
+% 带背景色的盒子，<material> 为盒子中的内容
+\colorbox[<color-mode>]{<code>}{<material>}
+\colorbox{<color-name>}{<material>}
+% 带背景色和有色边框的盒子，<fcode> 和 <fcolor-name> 用于设置边框颜色
+\fcolorbox[<color-mode>]{<fcode>}{<code>}{<material>}
+\fcolorbox{fcolor-name}{<color-name>}{<material>}
+
+
+################### 5.4使用超链接 ##########################################
+
+% hyperref 宏包——为减小冲突，习惯将此宏包放在其它宏包之后调用
+% 配置各种参数
+\usepackage[<option1>,<option2>=<value>,...]{hyperref}
+\hypersetup{<option1>,<option2>=<value>,...}		
+	参数					默认值	含义
+colorlinks=<true|false>		false	链接文字带颜色/加上带颜色的边框
+hidelinks							取消链接的颜色和边框
+pdfborder={<n> <n> <n>}		0 0 1	超链接边框设置，0 0 0 取消边框
+bookmarks=<true|false>		true	是否生成书签（只能作为宏包选项）
+bookmarksopen=<true|false>	false	是否展开书签
+bookmarksnumbered=<true|false>	false	书签是否带章节编号
+pdftitle=<string>			空		标题
+pdfauthor=<string>			空		作者
+pdfsubject=<string>			空		主题
+pdfkeywords=<string>		空		关键词
+pdfstartview=<Fit|FitH|FitV>	Fit	设置页面以适合页面/宽度/高度等方式显示
+
+% 超链接
+\url{<url>}					% 直接书写 url，有颜色
+\nolinkurl{<url>}			% 无颜色
+\href{<url>}{<text>}		% 将一段文字作为超链接
+\hyperref[<label>]{<text>}	% 将 label 作为超链接
+
+% PDF 书签
+\pdfbookmark[<level>]{<bookmark>}{<anchor>}		% 手动生成书签
+		% <bookmark> 为书签名称
+		% <anchor> 为书签项使用的锚点（类似交叉引用的标签）
+		% <level> 为书签层级，默认为 0 
+% 在章节标题中使用 LaTeX 代码，而书签中使用纯文本
+\texorpdfstring{<LaTeX code>}{<PDF bookmark text>}
+		例：在章节名称里使用公式 E = mc^2，而书签则使用纯文本形式的 E=mc^2
+		\section{质能公式 \texorpdfstring{$E=mc^2$}{E=mc\textasciicircum 2}}
+
+
+############################################################################
+#### 6.自定义命令和功能
+#### 目的：编写可重复利用的模块
+############################################################################
+
+
+################### 6.1自定义命令和环境 ####################################
+
+% 定义自己的命令
+\newcommand{\<name>}[<num>]{<definition>}
+		% <name> 为命令名称
+		% <definition> 为命令的具体定义
+		% <num> 可选，指定命令所需参数数目（最多 9 个），缺省默认为 0
+		% 在 <definition> 中使用参数时，使用 #1、#2、… 标记
+		% 注意：\newcommand 不允许定义与现有命令重名的命令
+
+\renewcommand{\<name>}[<num>]{<definition>}
+		% 重定义现有命令
+
+\providecommand		% 用法同前两个。命令未定义时，相当于 \newcommand
+					% 命令已定义时，沿用已有定义
+
+% 定义环境
+\newenvironment{<name>}[<num>]{<before>}{<after>}
+		% <before> 中的内容在此环境包含的文本之前处理
+		% <after> 中的内容在遇到 \end{<name>} 命令时处理
+
+\renewenvironment{<name>}[<num>]{<before>}{<after>}
+		% 重定义现有环境
+
+
+################### 6.2编写自己的宏包和文档类 ##############################
+
+% 编写简单的宏包——将导言区的内容拷贝到另一文件并以 .sty 作扩展名
+\ProvidesPackage{<package name>}	
+		% 宏包专用命令，放在宏包的最前面
+		% <package name> 需要和宏包文件名一致
+		% 作用是让 LaTeX 记录宏包名称
+
+% 在宏包中调用其它宏包
+\RequirePackage[<options>]{<package name>}
+
+% 编写自己的文档类——文档类以 .cls 作扩展名，然后开头使用 \ProvideClass
+\ProvideClass{<class name>}				% <class name> 与文档类文件名一致
+\LoadClass[<options>]{<package name>}	% 在自己的文档类中调用其它文档类
+
+
+################### 6.3定义和修改计数器 ####################################
+计数器：对文档元素自动计数。如章节符号、列表、图表等
+
+% 定义和修改计数器
+\newcounter{<counter name>}[<parent counter name>]
+		% <counter name> 为计数器名称
+		% <parent counter name> 定义为 <counter name> 的上级计数器
+
+\setcounter{<counter name>}{<number>}	% 修改计数器数值为 <number>
+\addtocounter{<counter name>}{<number>}	% 将数值加上 <number>
+\stepcounter{<counter name>}{<number>}	% 数值加一，并将所有下级计数器归零
+
+% 计数器的输出格式
+\the<counter>		% 表示输出格式。如 \thechapter
+					% 默认为阿拉伯数字。修改形式需要重定义 \the<counter>
+		例：将 equation 计数器格式定义为大写字母
+			\renewcommand\theequation{\Alph{equation}}
+命令				样式				范围
+\arabic			阿拉伯数字(默认)	
+\alph			小写字母				限 0—26
+\Alph			大写字母				限 0—26
+\roman			小写罗马字母			限非负整数
+\Roman			大写罗马字母			限非负整数
+\fnsymbol		一系列符号，用于 \thanks 命令生成的脚注		限 0—9
+
+% LaTeX 中的计数器
+章节命令 \chapter、\section		chapter、section(有上下级关系)。part(独立)
+有序列表 enumerate				enumi、enumii、enumiii、enumiv(有上下级关系)
+图表浮动体						table、figure
+公式							equation
+页码、脚注						page、footnote
+
+% secnumdepth 计数器——控制章节编号的深度
+% 如果章节的层级大于 secnumdepth，那么章节的 标题、在目录和页眉页脚的标题都不编号（照常生成目录和页眉页脚），章节计数器也不计数
+\setcounter 可设置 secnumdepth
+		% 如设为较大的数使得层级比较深的章节也编号，如设为 4 令 、paragraph 也编号
+		% 设置一个较小的数以取消编号，如设置为 -1 令 \chapter 不编号
+		% 在 article 文档类里默认为 3 （subsubsection 一级）
+		% 在 report 和 book 文档类里默认为 2 （subsection 一级）
+
+% tocdepth 计数器——控制目录深度
+% 如果章节的层级大于 tocdepth，那么章节将不会自动写入目录项
+% 默认值同 secnumdepth
+
+
