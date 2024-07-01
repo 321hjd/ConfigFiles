@@ -67,9 +67,9 @@ set sm					   "设置高亮匹配括号
 filetype on                "设置开启文件类型侦测
 filetype indent on         "自适应不同语言的智能缩进
 "设置各个文件保存目录
-#set backupdir=D:/18482/Vimfiles/backup//
-#set directory=D:/18482/Vimfiles/swp//
-#set undodir=D:/18482/Vimfiles/undo//
+"set backupdir=D:/18482/Vimfiles/backup//
+"set directory=D:/18482/Vimfiles/swp//
+"set undodir=D:/18482/Vimfiles/undo//
 
 " 隐藏GVIM菜单及设置
 set lines=25 columns=100   " 窗口大小
@@ -93,18 +93,18 @@ nnoremap <leader>e :vs ~/_vimrc<cr>
 nnoremap <leader>r :source $MYVIMRC<cr>
 "快速打开帮助文档设置（自己下载的文档）
 "快速打开最佳vim技巧（垂直分割模式）
-#nnoremap <leader>v :vs D:\18482\Vimfiles\note\vim-cheatsheet.txt<cr>
+nnoremap <leader>v :vs ~\vimfiles\note\vim-cheatsheet.txt<cr>
 "快速打开vim-cheatsheet（垂直分割模式）
-#nnoremap <leader>g :vs D:\18482\Vimfiles\note\git-cheatsheet.txt<cr>
+nnoremap <leader>g :vs ~\vimfiles\note\git-cheatsheet.txt<cr>
 "快速打开bash-cheatsheet（垂直分割模式）
-#nnoremap <leader>b :vs D:\Vim\note\bash-cheatsheet.txt<cr>
+nnoremap <leader>b :vs ~\vimfiles\note\bash-cheatsheet.txt<cr>
 "快速打开LaTex-cheatsheet（垂直分割模式）
-#nnoremap <leader>l :vs D:\18482\Vimfiles\note\LaTex-cheatsheet.txt<cr>
+nnoremap <leader>l :vs ~\vimfiles\note\LaTex-cheatsheet.txt<cr>
 "----------------------------配置基本功能-------------------------------
 "----------------------------ctags配置，实现函数跳转功能----------------
 "自动切换目录并指定tag文件,注意生成ctags文件需要在命令行模式执行!tags -R
-#set tags=./tags;,tags
-#set autochdir
+"set tags=./tags;,tags
+"set autochdir
 
 "-----------------------------------------------------------------------
 
