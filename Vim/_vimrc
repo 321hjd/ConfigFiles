@@ -67,9 +67,9 @@ set sm					   "设置高亮匹配括号
 filetype on                "设置开启文件类型侦测
 filetype indent on         "自适应不同语言的智能缩进
 "设置各个文件保存目录
-"set backupdir=D:/18482/Vimfiles/backup//
-"set directory=D:/18482/Vimfiles/swp//
-"set undodir=D:/18482/Vimfiles/undo//
+set backupdir=D:/documents/Vim_files/backup//
+set directory=D:/documents/Vim_files/swp//
+set undodir=D:/documents/Vim_files/undo//
 
 " 隐藏GVIM菜单及设置
 set lines=25 columns=100   " 窗口大小
